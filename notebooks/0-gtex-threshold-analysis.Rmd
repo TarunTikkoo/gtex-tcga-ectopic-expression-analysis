@@ -1,0 +1,513 @@
+---
+title: "GTEx Threshold Analysis"
+output: html_notebook
+---
+#### Note: This notebook is still being reviewed - review process performed up to binary expression matrix section
+
+Threshold analysis was an initial approach to identify NPTR genes but was not used as it was found to be a naive approach.
+
+```{r Package/data setup}
+# Setup for packages and data files
+library(ggplot2)
+library(tidyverse)
+library(ggrepel) # labels on ggplot
+library(ggforce) # facet wrap paginate
+# library(knitr) 
+library(matrixStats) # for rowMedians
+# library(DT) # datatable
+library(reldist) # Gini Coefficient
+library(reshape2) # for melt
+
+# Load condensed gtex median by tpm
+gtex_tpm <- read_csv("../data/processed/gtex_tpm_condensed.csv")
+```
+
+
+```{r Prostate Expression Histogram}
+ggplot(melt((gtex_tpm$Prostate)),aes(x = value)) + 
+  geom_histogram(breaks = c(0,1,2, 5, 10, 20, 30, 40, 50, 60), color = 'black', fill = 'white') +
+  coord_cartesian(xlim=c(0, 60)) +
+  labs(title = 'Histogram of Gene Expression in Prostate Tissues',
+       x = 'TPM', 
+       y = 'Number of genes')
+```
+# Threshold Matrix
+
+We want a Y/N matrix of whether a gene is expressed in a tissue or not. From this matrix we can determine if a gene is:
+
+- a prostate gene or a non prostate gene
+  - if it is a prostate gene, is it:
+    - prostate specific or
+    - global
+  - if it is a non-prostate gene, is it:
+    - specific to a certain other tissue or
+    - global
+    
+*N.B. Mitochondrial genes ('MT___') and ribosomal genes (RP___) may not be useful - might be a good idea to remove them as well as non-protein coding genes (anything with a period.)*
+
+# Still under review from this point ahead
+
+## Binary Matrix
+
+The expression data was changed to a binary matrix indicating whether or not a gene is expressed in a certain tissue. If the expression data was higher than 1 TPM, the value was changed to 1 indicating expression. If the value was less than 1 TPM, the matrix shows a 0 indicating no expression.
+
+We now have a binary gene expression matrix. Using this threshold, We can see that 18196 genes in this matrix are expressed in prostate tissue.
+
+
+```{r}
+# change matrix to 1 if above threshold (i.e. if expressed), 0 if below threshold (not expressed)
+threshold_mat <- gtex_tpm_condensed
+threshold_mat[-c(1,2)] <- ifelse(threshold_mat[-c(1,2)] > 1, 1, 0) # Binary matrix
+
+# frequency plot
+# 18196 genes expressed in prostate
+prost_thres <- ggplot(data = threshold_mat, aes(x = factor(Prostate))) +
+  geom_bar(color = 'black', fill = 'white', width = 0.5) +
+  geom_text(stat='count', aes(label = ..count..), vjust = -0.3) +
+    labs(title = 'Count of gene TPM above 1 in normal prostate tissue',
+        x = 'Gene Expression in Prostate Tissue', 
+        y = 'Number of Genes') +
+  scale_x_discrete(labels=c("0" = "Not Expressed", "1" = "Expressed"))
+
+```
+
+Now, total number of tissues that were expressed in each gene were calculated before determining the ratio of tissues that with gene expression.
+
+N.B. 12,115 genes are not expressed (0 TPM) in any tissue
+
+```{r}
+# Calculate sums of trues, falses and proportion of trues
+threshold_mat$Expressed <- rowSums(threshold_mat[c(3:32)] == 1)
+threshold_mat$Not_Expressed <- 30 - threshold_mat$Expressed
+threshold_mat$Expressed_ratio <- threshold_mat$Expressed /(threshold_mat$Expressed + threshold_mat$Not_Expressed)
+
+ggplot(data = threshold_mat, aes(x = factor(Expressed))) +
+  geom_bar(color = 'black', fill = 'white') +
+  labs(title = 'Globality of gene epxression',
+       subtitle = 'Count of number of genes in different number of tissues',
+       x = 'Number of tissues with gene expression', 
+       y = 'Number of genes')
+```
+
+Notes:
+
+- 24513 genes (44%) are not expressed in any tissue
+- 6881 genes (12%) are expressed in only *one* tissue.
+- 8916 genes (16%) are expressed in *all* tissues.
+
+# Prostate Genes
+
+A new matrix was created such that it contained only the genes that are expressed in the prostate tissue.
+
+```{r}
+# Variable to hold dataframe of genes expressed in normal prostate tissue
+prostate_expr <- filter(threshold_mat, Prostate == 1)
+
+# Genes NOT expressed in normal prostate tissue
+prostate_nonexpr <- filter(threshold_mat, Prostate == 0)
+
+ggplot(data = filter(prostate_expr, Expressed < 30)) +
+  geom_bar(mapping = aes(factor(x = Expressed)), 
+                 color = 'black',
+                 fill = 'white') +
+  labs(title = 'Expression of prostate genes in other tissues',
+       subtitle = '8916 genes which are expressed in all 30 tissues are not included',
+       x = 'Number of Tissues',
+       y = 'Number of Expressed Genes')
+```
+- 18196 genes are expressed in prostate tissue. Of these:
+    - 8916 of these genes are expressed in *all* tissues
+    - 26 of these genes are expressed in *only* prostate tissue.
+    - 154 of these genes are expressed in less than or eqal to *10%* of all tissues - defined as prostate-specific.
+    
+### Prostate Only Genes
+
+The following table shows the 26 genes that are expressed only in the prostate tissue.
+
+```{r}
+threshold_mat %>%
+  filter(Prostate == 1 & Expressed == 1) %>% # filter rows to select the genes expressed only in prostate tissue
+  select(Name) %>% # select corresponding gene names
+  inner_join(gtex_tpm_condensed, by = "Name") %>% # join maximum values of these genes
+  filter(Prostate > 1) %>% # filter out any non-expressed rows in case of duplicates
+  select(Description, Prostate) %>%
+  datatable(width = 300)
+```
+
+Notes:
+
+* 11 non-coding RNA RP genes
+* STEAP2 - increased expression associated with prostate cancer progression
+* PCAT4 - prostate cancer associated transcript 4
+* SNORA42 - small nucleolar RNA that guide the sites of modification of uridines to pseudouridines, prognostic biomarker in colorectal cancers
+
+
+### Prostate Specific Genes
+The following table shows genes defined as prostate specific i.e. prostate genes that are expressed in less than or equal to 10% of tissues
+
+```{r}
+prostate_expr_specific <- filter(prostate_expr, Expressed_ratio <= 0.1)
+
+threshold_mat %>%
+  filter(Prostate == 1 & Expressed_ratio <= 0.1) %>% # filter rows to select the genes expressed in prostate tissue and less than                                                      #  10% of other tissues
+  select(Name, Expressed) %>% # select corresponding gene names
+  inner_join(gtex_tpm_condensed, by = c("Name")) %>% # join maximum values of these genes
+  filter(Prostate > 1) %>% # filter out any non-expressed rows in case of duplicates
+  datatable()
+```
+
+```{r}
+prostate_expr_specific.totals <- data.frame(value=apply(prostate_expr_specific[3:32],2,sum))
+# geom_col used instead of geom_col because it uses stat_identity by default
+ggplot(data = prostate_expr_specific.totals, 
+       aes(x = factor(reorder(rownames(prostate_expr_specific.totals), -value)), 
+           y = value, 
+           label = value)) +
+  geom_col(colour = 'black', 
+           fill = 'white') +
+  labs(title = 'Expression across tissues of prostate-specific genes',
+       subtitle = 'Prostate-specific defined as expressed in less than or equal to 10% of tissues',
+       x = 'Tissues',
+       y = 'Number of Genes expressed') + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   hjust = 1, 
+                                   vjust = 0.3),
+        axis.ticks = element_blank()) +
+  geom_text(size = 3, 
+            nudge_y = 8)
+```
+
+The following 7 prostate specific genes are also expressed in the **liver**:
+```{r}
+# COMMENTS
+
+prostate_expr_specific %>%
+  filter(Liver == 1) %>%
+  select(Name) %>%
+  inner_join(gtex_tpm_condensed, by = c("Name")) %>% # join TPM data of these genes
+  select(Description, Liver, Prostate) %>%
+  datatable(width = 400)
+```
+
+```{r eval=FALSE, include=FALSE}
+# filter(gtex_tpm_condensed, startsWith(Description, c("TRPM8", "RP11-132A1.6")))[2:32] %>%
+#   gather(Tissues, TPM, -Description)  %>%
+#   ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+#       geom_col() +
+#       facet_grid_paginate(Description ~ ., 
+#                           nrow = 2, 
+#                           ncol = 1, 
+#                           page = 1, 
+#                           scales = 'free') +
+#       scale_fill_manual(name = 'Tissues', 
+#                         values = c('grey50', 'red')) +
+#       theme(axis.text.x = element_text(angle = 90, 
+#                                      hjust = 1, 
+#                                      vjust = 0.4),
+#           axis.ticks = element_blank())
+```
+
+
+
+The following 31 prostate specific genes are also expressed in the **brain**:
+```{r}
+prostate_expr_specific %>%
+  filter(Brain == 1) %>%
+  select(Name) %>%
+  inner_join(gtex_tpm_condensed, by = c("Name")) %>% # join TPM data of these genes
+  select(Description, Brain, Prostate) %>%
+  datatable(width = 400)
+```
+
+Note: bar graph for these genes is under construction, duplicate names are causing an issue, have to use pipelining rather than inserting gene names.
+
+### Global Prostate Genes
+
+```{r}
+prostate_expr_global <- filter(prostate_expr, Expressed_ratio > 0.5)
+
+prostate_expr_global.totals <- data.frame(value=apply(prostate_expr_global[3:32],2,sum))
+
+# geom_col used instead of geom_col because it uses stat_identity by default
+ggplot(data = prostate_expr_global.totals, 
+       aes(x = factor(reorder(rownames(prostate_expr_global.totals), -value)), 
+           y = value, 
+           label = value)) +
+  geom_col( colour = 'black', fill = 'white') +
+  labs(title = 'Expression across tissues of global prostate genes',
+       subtitle = 'Global defined as expressed in more than 50% of tissues',
+       x = 'Tissues',
+       y = 'Number of Genes expressed') + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   hjust = 1, 
+                                   vjust = 0.4),
+        axis.ticks = element_blank()) +
+  geom_text(size = 3, 
+            nudge_y = -2000,
+            nudge_x = -0.05,
+            angle = 90)
+```
+
+# Non-prostate genes
+
+```{r}
+non_prostate <- filter(threshold_mat, Prostate == 0 & Expressed > 0)
+
+non_prostate_tissue.specific <- filter(non_prostate, Expressed_ratio > 0 & Expressed_ratio <= 0.1)
+
+non_prostate_tissue.specific.totals <- data.frame(value=apply(non_prostate_tissue.specific[3:32],2,sum))
+
+ggplot(data = non_prostate_tissue.specific.totals, 
+       aes(x = factor(reorder(rownames(non_prostate_tissue.specific.totals), -value)), 
+           y = value, 
+           label = value)) +
+  geom_col(colour = 'black', 
+            fill = 'white') +
+  labs(title = 'Expression across tissues of tissue-specific genes not expressed in prostate',
+       subtitle = 'Tissue-specific defined as expressed in less than or equal to 10% of tissues',
+       x = 'Tissues',
+       y = 'Number of Genes expressed') + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   hjust = 1, 
+                                   vjust = 0.4),
+        axis.ticks = element_blank()) +
+  geom_text(size = 2.8, 
+            nudge_y = 300)
+```
+
+# Genes of Interest
+
+## KLK Genes
+
+Notes:
+
+* KLKP1 is prostate specific - expressed in the testis and the prostate
+* No other KLK genes are prostate only or prostate specific
+
+```{r}
+KLK.all.max <- filter(gtex_tpm_condensed, startsWith(Description, 'KLK'))
+
+KLK.all.max %>%
+  select(Name, Description, Prostate) %>%
+  inner_join(threshold_mat[, c('Name', 'Expressed_ratio')], by = "Name") %>%
+  datatable()
+```
+
+
+```{r}
+KLK.all.max[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 4, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+```{r}
+KLK.all.max[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 4, 
+                          ncol = 1, 
+                          page = 2, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+```{r}
+KLK.all.max[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 4, 
+                          ncol = 1, 
+                          page = 3, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+```{r}
+KLK.all.max[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 4, 
+                          ncol = 1, 
+                          page = 4, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+```{r}
+KLK.all.max[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 1, 
+                          ncol = 1, 
+                          page = 17, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+## PSMA Protein
+### FOLH1 Gene
+
+These two genes are not prostate specific. FOLH1 is expressed in 14 tissues, FOLH1B is expressed in 2 (kidney and liver)
+
+```{r}
+filter(gtex_tpm_condensed, startsWith(Description, "FOLH1"))[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 2, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+
+## AMACR Gene
+
+Expressed in all 30 tissues.
+
+
+```{r}
+filter(gtex_tpm_condensed, startsWith(Description, "AMA"))[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 1, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+
+## SLCO1B3
+Expressed in the Liver, Nerve - Tibial, Testis. Not expressed in the prostate.
+
+```{r}
+filter(gtex_tpm_condensed, startsWith(Description, "SLCO1B3"))[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 1, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+
+```{r}
+filter(gtex_tpm_condensed, startsWith(Description, "SLCO1B3"))[2:32] %>%
+  pivot_longer(., names_to = "Tissues",cols = 2:31) %>%
+  .$Tissues = factor(.)
+
+
+filter(x, startsWith(Description, "SLCO1B3"))[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 1, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+
+
+## Various Genes
+
+```{r}
+filter(gtex_tpm_condensed, startsWith(Description, "SLCO1B3"))[2:32] %>%
+  gather(Tissues, TPM, -Description)  %>%
+  ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 1, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+```
+
+```{r}
+# Collection of genes of interest
+filter(gtex_tpm_condensed, Description == 'KLK3' | Description == 'AMACR' | 
+                        Description == 'SLCO1B3' | Description == 'STEAP2-AS1')[2:32] %>%
+  gather(Tissues, TPM, -Description) %>%
+    ggplot(aes(Tissues, TPM, fill = ifelse(Tissues == 'Prostate', 'Prostate', 'Other'))) +
+      geom_col() +
+      facet_grid_paginate(Description ~ ., 
+                          nrow = 4, 
+                          ncol = 1, 
+                          page = 1, 
+                          scales = 'free') +
+      scale_fill_manual(name = 'Tissues', 
+                        values = c('grey50', 'red')) +
+      theme(axis.text.x = element_text(angle = 90, 
+                                     hjust = 1, 
+                                     vjust = 0.4),
+          axis.ticks = element_blank())
+  
+```
+
