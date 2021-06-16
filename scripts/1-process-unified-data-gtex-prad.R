@@ -1,4 +1,3 @@
-
 # Load packages and functions ---------------------------------------------
 
 library(tidyverse)
@@ -28,7 +27,7 @@ gtex_import_median <- function(tissue.Filename) {
   # matrixStats package required for rowMedians
   
   # Extract tissue name from file name and read to tibble
-  tissue <- word(tissue.Filename, 1, sep = "-")
+  tissue <- word(list.files(unified_data_path, pattern = gtex.File), 1, sep = "-")
   tissue.tbl <- read_tsv(tissue.Filename)
   
   # Calculate median expression of each gene across all samples
@@ -57,7 +56,7 @@ prad <- prad_import_median(paste(unified_data_path, "prad-rsem-fpkm-tcga.txt", s
 # Load Unified GTEx -------------------------------------------------------
 
 
-# Import gene names in each GTEx file to a list
+# Import gene names in each GTEx tissue file to a list
 {
 # All GTEx filenames
 gtex.Files <- sort(list.files(unified_data_path, pattern = "gtex.txt"))
@@ -98,6 +97,7 @@ prad_intersected <- prad %>%
 # GTEx data
 gtex_intersected <- as_tibble_col(prad_gtex_intersected_genes, "Hugo_Symbol")
 
+
 # Add tissues and corresponding gene expressions.
 for (gtex.File in gtex.Files) {
   gtex_intersected <- inner_join(gtex_intersected, 
@@ -105,5 +105,27 @@ for (gtex.File in gtex.Files) {
                                  by = "Hugo_Symbol")
 }
 
-write.csv(gtex_intersected, file = "data/processed/gtex-unified-(gtex+prad-genes-only).csv")
-write.csv(prad_intersected, file = "data/processed/prad-unified-(gtex+prad-genes-only).csv")
+# gtex_intersect nowis now 18154 genes by 15 tissues matrix 3 columns are
+# subtissues of esophagus. The following section condenses them using max
+# expression across the 3.
+{
+easophagus_cols = 6:8
+  
+max_easophagus <- rowMaxs(as.matrix(gtex_intersected[,easophagus_cols]))
+
+gtex_intersected <-
+  gtex_intersected %>%
+  select(-c(easophagus_cols)) %>%
+  add_column(max_easophagus)
+
+# Clean up Environment
+rm(max_easophagus)
+}
+
+write.csv(gtex_intersected, 
+          file = "data/processed/gtex-unified-(gtex+prad-genes-only).csv",
+          row.names = F)
+
+write.csv(prad_intersected, 
+          file = "data/processed/prad-unified-(gtex+prad-genes-only).csv",
+          row.names = F)
