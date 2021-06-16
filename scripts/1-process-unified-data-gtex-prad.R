@@ -44,7 +44,7 @@ gtex_import_median <- function(tissue.Filename) {
 
 # Load Unified PRAD ---------------------------------------------------------------
 # The unified data is too large to be uploaded to GitHub
-# Place all data in a folder and set path to variable below
+# Place all data files in a folder and set path to variable below
 # Data citation 3 from Wang et al (2018): https://figshare.com/articles/dataset/Data_record_3/5330593
 unified_data_path <- "../_large-data-files/gtex-tcga-unified/"
 
