@@ -10,8 +10,6 @@ Repository to store all work performed for the MC-SCBIF Research Project with Dr
 Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequencing data from different sources. *Sci Data* **5,** 180061 (2018). https://doi.org/10.1038/sdata.2018.61
 
 ### To do next
-- 3-gc-pcon-comparison
-  - GC vs GC and PCON vs PCON plots for unified vs condensed GTEx data
 - 4-identify-nptr
 
 ## Output Summary
@@ -25,3 +23,6 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | data/processed  | gtex_unified_pcon_gini.csv                | 2            |
 | figs            | PCON vs Gini - GTEx condensed dataset.png | 2            |
 | figs            | PCON vs Gini - GTEx unified dataset.png   | 2            |
+| figs            | Gini Condensed vs Gini Unified.png        | 3            |
+| figs            | PCON Condensed vs PCON Unified.png        | 3            |
+
