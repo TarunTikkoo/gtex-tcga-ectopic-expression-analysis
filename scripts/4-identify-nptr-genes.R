@@ -12,14 +12,15 @@ gtex_condensed_gc_pcon <- read.csv("data/processed/gtex_condensed_pcon_gini.csv"
 # Filter high GC, Low PCON Genes on Unified Dataset ---------------------------
 
 # Classify NPTR genes as those with GC > 0.9 and PCON < 0.10
-gc_quantile = 0.90
-pcon_quantile = 0.10
+gc_quantile = 0.95
+pcon_quantile = 0.05
 
-gtex_unified_gc_pcon %>% 
+nptr_genes <- gtex_unified_gc_pcon %>% 
   filter(gini_coeff > quantile(gtex_unified_gc_pcon$gini_coeff, gc_quantile)) %>% 
   filter(pcon < quantile(gtex_unified_gc_pcon$pcon, pcon_quantile)) %>% 
-  select(Hugo_Symbol) %>% 
-  write.csv(., file = "data/processed/nptr_genes_unified_dataset")
+  select(Hugo_Symbol)
+
+write.csv(nptr_genes, file = "data/processed/nptr_genes_unified_dataset")
 
 
 # Condensed Data ------------------------------------------------------------
