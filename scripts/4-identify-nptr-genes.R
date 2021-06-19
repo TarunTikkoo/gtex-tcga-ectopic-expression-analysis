@@ -11,12 +11,27 @@ gtex_condensed_gc_pcon <- read.csv("data/processed/gtex_condensed_pcon_gini.csv"
 
 # Filter high GC, Low PCON Genes on Unified Dataset ---------------------------
 
+# Classify NPTR genes as those with GC > 0.9 and PCON < 0.10
+gc_quantile = 0.90
+pcon_quantile = 0.10
+
 gtex_unified_gc_pcon %>% 
-  filter(gini_coeff > quantile(gtex_unified_gc_pcon$gini_coeff, 0.90)) %>% 
-  filter(pcon < quantile(gtex_unified_gc_pcon$pcon, 0.10)) %>% 
-  # select(Hugo_Symbol)
-  nrow(.)
+  filter(gini_coeff > quantile(gtex_unified_gc_pcon$gini_coeff, gc_quantile)) %>% 
+  filter(pcon < quantile(gtex_unified_gc_pcon$pcon, pcon_quantile)) %>% 
+  select(Hugo_Symbol) %>% 
+  write.csv(., file = "data/processed/nptr_genes_unified_dataset")
+
+
+# Condensed Data ------------------------------------------------------------
+
+# NB. quantile selection for GC and PCON will have to be very different here
+# since distribution of GCs is right skewed in condensed but left skewed in
+# unified
+# par(mfrow = c(1,2))
+# hist(gtex_condensed_gc_pcon$gini_coeff)
+# hist(gtex_unified_gc_pcon$gini_coeff)
 
 gtex_condensed_gc_pcon %>% 
-  filter(gini_coeff > quantile(gtex_condensed_gc_pcon$gini_coeff, 0.8)) %>% 
-  filter(pcon < quantile(gtex_condensed_gc_pcon$pcon, 0.35))
+  filter(gini_coeff > quantile(gtex_condensed_gc_pcon$gini_coeff, gc_quantile)) %>% 
+  filter(pcon < quantile(gtex_condensed_gc_pcon$pcon, pcon_quantile)) %>% 
+  select(Hugo_Symbol)
