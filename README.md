@@ -3,14 +3,16 @@ Repository to store all work performed for the MC-SCBIF Research Project with Dr
 
 ### Raw Datasets Used
 - GTEx Median gene-level TPM by tissue: [Link](https://www.gtexportal.org/home/datasets)
+  - Subtissues from this dataset were condensed into a single tissue using the max expression across subtissues. Therefore, this dataset will be referred to as the "Condensed GTEX" set in this project.
 - Data Record 3 from Wang *et al.* (2018)
   - [Article](https://www.nature.com/articles/sdata201861)
   - [Data](https://figshare.com/articles/dataset/Data_record_3/5330593)
+  - This set will be referred as the "unified GTEx" dataset
   
 Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequencing data from different sources. *Sci Data* **5,** 180061 (2018). https://doi.org/10.1038/sdata.2018.61
 
 ### To do next
-- 4-identify-nptr
+- 5-Analyse NPTR
 
 ## Output Summary
 
