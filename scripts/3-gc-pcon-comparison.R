@@ -28,7 +28,7 @@ ggscatter(gc_pcon_comparison_df,
     y = 'Gini before unification') +
   xlim(0,1)+ylim(0,1)
 
-# ggsave(file = "Gini Condensed vs Gini Unified.png")
+# ggsave(file = "figs/Gini Condensed vs Gini Unified.png")
 
 # PCON Condensed vs PCON unified ----------------------------------------------
 ggscatter(gc_pcon_comparison_df,
@@ -41,4 +41,4 @@ ggscatter(gc_pcon_comparison_df,
     y = 'PCON before unification') +
   xlim(0,1) + ylim(0,1)
 
-# ggsave(file = "PCON Condensed vs PCON Unified.png")
+# ggsave(file = "figs/PCON Condensed vs PCON Unified.png")
