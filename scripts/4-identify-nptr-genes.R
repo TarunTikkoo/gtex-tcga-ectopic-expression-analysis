@@ -21,13 +21,15 @@ nptr_genes <- gtex_unified_gc_pcon %>%
   select(Hugo_Symbol)
 
 write.csv(nptr_genes, file = "data/processed/nptr_genes_unified_dataset")
-
+nptr_genes_642 <- nptr_genes$Hugo_Symbol
+save(nptr_genes_642, file = "data/objects/642_nptr_genes.RData")
 
 # Condensed Data ------------------------------------------------------------
 
 # NB. quantile selection for GC and PCON will have to be very different here
 # since distribution of GCs is right skewed in condensed but left skewed in
-# unified
+# unified. Output not saved since it is not used.
+
 # par(mfrow = c(1,2))
 # hist(gtex_condensed_gc_pcon$gini_coeff)
 # hist(gtex_unified_gc_pcon$gini_coeff)

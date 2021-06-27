@@ -16,6 +16,7 @@ gc_pcon_comparison_df <-
   rename(pcon_unified = pcon) %>% 
   rename(gc_unified = gini_coeff)
 
+write.csv(gc_pcon_comparison_df, file = "data/processed/gc_pcon_unified_vs_condensed.csv")
 
 # GC Condensed vs GC unified ----------------------------------------------
 ggscatter(gc_pcon_comparison_df, 

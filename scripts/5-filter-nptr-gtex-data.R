@@ -7,7 +7,7 @@ nptr_genes <- read_csv("data/processed/nptr_genes_unified_dataset",
                        col_names = T)$Hugo_Symbol
 
 # Function:
-# Calculate summary() statistics by row
+# Calculate min, Q1, median, mean, Q3 and max for each row
 # Input: matrix over which stats are to be calculated
 # Output: vector of summary stats
 # Bind to df by cbind(df, t(apply(df, 1, summary.by.row)))
@@ -36,3 +36,9 @@ summary(gtex_unified_nptr[15:ncol(gtex_unified_nptr)])
 # 301 NPTR genes here
 gtex_unified_nptr_filtered <- 
   gtex_unified_nptr %>% filter(Quantile.3 > 1 & Max > 1000)
+
+write.csv(gtex_unified_nptr_filtered, file = "data/processed/301_nptr_genes_unified_dataset.csv")
+
+nptr_genes_301 <- gtex_unified_nptr_filtered$Hugo_Symbol
+
+save(nptr_genes_301, file = "data/objects/301_nptr_genes.RData")
