@@ -20,7 +20,6 @@ nptr_genes <- gtex_unified_gc_pcon %>%
   filter(pcon < quantile(gtex_unified_gc_pcon$pcon, pcon_quantile)) %>% 
   select(Hugo_Symbol)
 
-write.csv(nptr_genes, file = "data/processed/nptr_genes_unified_dataset")
 nptr_genes_642 <- nptr_genes$Hugo_Symbol
 save(nptr_genes_642, file = "data/objects/642_nptr_genes.RData")
 

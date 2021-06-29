@@ -3,8 +3,7 @@ library(tidyverse)
 library(matrixStats)
 
 gtex_unified <- read_csv("data/processed/gtex-unified-(gtex+prad-genes-only).csv")
-nptr_genes <- read_csv("data/processed/nptr_genes_unified_dataset", 
-                       col_names = T)$Hugo_Symbol
+load("data/objects/642_nptr_genes.RData")
 
 # Function:
 # Calculate min, Q1, median, mean, Q3 and max for each row
@@ -23,8 +22,9 @@ summary.by.row <- function(x)
 
 # Filter unified data to nptr and perform summary calculations ------------
 
-gtex_unified_nptr <- filter(gtex_unified, Hugo_Symbol %in% nptr_genes)
+gtex_unified_nptr <- filter(gtex_unified, Hugo_Symbol %in% nptr_genes_642)
 gtex_unified_nptr <- cbind(gtex_unified_nptr, t(apply(gtex_unified_nptr[2:14], 1, summary.by.row)))
+write.csv(gtex_unified_nptr, file = "data/processed/642_nptr_genes_unified_dataset.csv")
 # 642 NPTR genes so far
 
 summary(gtex_unified_nptr[15:ncol(gtex_unified_nptr)])
@@ -40,5 +40,4 @@ gtex_unified_nptr_filtered <-
 write.csv(gtex_unified_nptr_filtered, file = "data/processed/301_nptr_genes_unified_dataset.csv")
 
 nptr_genes_301 <- gtex_unified_nptr_filtered$Hugo_Symbol
-
 save(nptr_genes_301, file = "data/objects/301_nptr_genes.RData")

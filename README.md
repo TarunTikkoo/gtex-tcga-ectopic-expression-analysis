@@ -12,11 +12,15 @@ Repository to store all work performed for the MC-SCBIF Research Project with Dr
 Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequencing data from different sources. *Sci Data* **5,** 180061 (2018). https://doi.org/10.1038/sdata.2018.61
 
 ### To do next
-- 5-Analyse NPTR
+- Update Output Summary Table
+- Find 30 GOI subset from Heatmap
+- 6-Analyse NPTR
+  - Check NPTR genes location in GC vs GC and PCON vs PCON
+    - 3 seperate colours, one for 642 set, one for 301 set and one for 30 goi set
 
 ## Output Summary
 
-| **Output Type** | **Output**                                | **Script #** |
+| **Location**    | **Output**                                | **Script #** |
 |-----------------|-------------------------------------------|--------------|
 | data/processed  | gtex_tpm_condensed.csv                    | 0            |
 | data/processed  | gtex-unified-(gtex+prad-genes-only).csv   | 1            |
@@ -27,4 +31,9 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | figs            | PCON vs Gini - GTEx unified dataset.png   | 2            |
 | figs            | Gini Condensed vs Gini Unified.png        | 3            |
 | figs            | PCON Condensed vs PCON Unified.png        | 3            |
+| data/processed  | gc_pcon_unified_vs_condensed.csv          | 3            |
+| data/processed  | nptr_genes_unified_dataset.csv            | 4            |
+| data/objects    | 642_nptr_genes.RData                      | 4            |
+| data/processed  | 301_nptr_genes_unified_dataset.csv        | 5            |
+| data/objects    | 301_nptr_genes.RData                      | 5            |
 
