@@ -24,7 +24,7 @@ summary.by.row <- function(x)
 
 gtex_unified_nptr <- filter(gtex_unified, Hugo_Symbol %in% nptr_genes_642)
 gtex_unified_nptr <- cbind(gtex_unified_nptr, t(apply(gtex_unified_nptr[2:14], 1, summary.by.row)))
-write.csv(gtex_unified_nptr, file = "data/processed/642_nptr_genes_unified_dataset.csv")
+write.csv(gtex_unified_nptr, file = "data/processed/642_nptr_genes_gtex_dataset.csv")
 # 642 NPTR genes so far
 
 summary(gtex_unified_nptr[15:ncol(gtex_unified_nptr)])
@@ -37,7 +37,7 @@ summary(gtex_unified_nptr[15:ncol(gtex_unified_nptr)])
 gtex_unified_nptr_filtered <- 
   gtex_unified_nptr %>% filter(Quantile.3 > 1 & Max > 1000)
 
-write.csv(gtex_unified_nptr_filtered, file = "data/processed/301_nptr_genes_unified_dataset.csv")
+write.csv(gtex_unified_nptr_filtered, file = "data/processed/301_nptr_genes_gtex_dataset.csv")
 
 nptr_genes_301 <- gtex_unified_nptr_filtered$Hugo_Symbol
 save(nptr_genes_301, file = "data/objects/301_nptr_genes.RData")

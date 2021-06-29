@@ -16,24 +16,23 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 - Find 30 GOI subset from Heatmap
 - 6-Analyse NPTR
   - Check NPTR genes location in GC vs GC and PCON vs PCON
-    - 3 seperate colours, one for 642 set, one for 301 set and one for 30 goi set
+    - separate colours for 642 and 301 set
 
 ## Output Summary
 
-| **Location**    | **Output**                                | **Script #** |
-|-----------------|-------------------------------------------|--------------|
-| data/processed  | gtex_tpm_condensed.csv                    | 0            |
-| data/processed  | gtex-unified-(gtex+prad-genes-only).csv   | 1            |
-| data/processed  | prad-unified-(gtex+prad-genes-only).csv   | 1            |
-| data/processed  | gtex_condensed_pcon_gini.csv              | 2            |
-| data/processed  | gtex_unified_pcon_gini.csv                | 2            |
-| figs            | PCON vs Gini - GTEx condensed dataset.png | 2            |
-| figs            | PCON vs Gini - GTEx unified dataset.png   | 2            |
-| figs            | Gini Condensed vs Gini Unified.png        | 3            |
-| figs            | PCON Condensed vs PCON Unified.png        | 3            |
-| data/processed  | gc_pcon_unified_vs_condensed.csv          | 3            |
-| data/processed  | nptr_genes_unified_dataset.csv            | 4            |
-| data/objects    | 642_nptr_genes.RData                      | 4            |
-| data/processed  | 301_nptr_genes_unified_dataset.csv        | 5            |
-| data/objects    | 301_nptr_genes.RData                      | 5            |
-
+| **Script #** | **Location**   | **Output**                                |                  **Description**                                   |
+|:------------:|----------------|-------------------------------------------|--------------------------------------------------------------------|
+| 0            | data/processed | gtex_tpm_condensed.csv                    | Condensed version of GTEx median dataset (in TPM)                  |
+| 1            | data/processed | gtex-unified-(gtex+prad-genes-only).csv   | Median gene expression of GTEx unified dataset (FPKM)              |
+| 1            | data/processed | prad-unified-(gtex+prad-genes-only).csv   | Median gene expression of TCGA PRAD tumour unified dataset (FPKM)  |
+| 2            | data/processed | gtex_condensed_pcon_gini.csv              | PCON, GC of GTEx median dataset genes                              |
+| 2            | data/processed | gtex_unified_pcon_gini.csv                | PCON, GC of unified GTEx genes                                     |
+| 2            | figs           | PCON vs Gini - GTEx condensed dataset.png | PCON vs GC plot - GTEx condensed dataset                           |
+| 2            | figs           | PCON vs Gini - GTEx unified dataset.png   | PCON vs GC plot - GTEx unified dataset                             |
+| 3            | figs           | Gini Condensed vs Gini Unified.png        | GC vs GC comparison plot of condensed and unified GTEx data        |
+| 3            | figs           | PCON Condensed vs PCON Unified.png        | PCON vs PCON comparison plot of condensed and unified GTEx data    |
+| 3            | data/processed | gc_pcon_unified_vs_condensed.csv          | PCON, GC comparison between unified and condensed GTEx data        |
+| 4            | data/objects   | 642_nptr_genes.RData                      | List of 642 NPTR genes                                             |
+| 5            | data/processed | 642_nptr_genes_gtex_dataset.csv           | Gene expression of 642 NPTR GTEx unified genes                     |
+| 5            | data/processed | 301_nptr_genes_gtex_dataset.csv           | Gene expression of 301 NPTR GTEx unified genes                     |
+| 5            | data/objects   | 301_nptr_genes.RData                      | List of 301 NPTR genes                                             |
