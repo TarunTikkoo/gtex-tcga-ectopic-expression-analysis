@@ -36,3 +36,5 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | 5            | data/processed | 642_nptr_genes_gtex_dataset.csv           | Gene expression of 642 NPTR GTEx unified genes                     |
 | 5            | data/processed | 301_nptr_genes_gtex_dataset.csv           | Gene expression of 301 NPTR GTEx unified genes                     |
 | 5            | data/objects   | 301_nptr_genes.RData                      | List of 301 NPTR genes                                             |
+| 6            | data/processed | nptr_prad_unified_301.csv                 | Expression of 301 NPTR genes in TCGA PRAD tumour dataset           |
+| 6            | data/processed | nptr_prad_unified_642.csv                 | Expression of 642 NPTR genes in TCGA PRAD tumour dataset           |
