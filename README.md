@@ -12,11 +12,9 @@ Repository to store all work performed for the MC-SCBIF Research Project with Dr
 Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequencing data from different sources. *Sci Data* **5,** 180061 (2018). https://doi.org/10.1038/sdata.2018.61
 
 ### To do next
-- Update Output Summary Table
-- Find 30 GOI subset from Heatmap
-- 6-Analyse NPTR
-  - Check NPTR genes location in GC vs GC and PCON vs PCON
-    - separate colours for 642 and 301 set
+- 8-nptr-sanity-check
+  - PCON vs PCON
+  - branch script to try and label NPTR gene sets. Some ideas [here](https://stackoverflow.com/questions/17713919/two-geom-points-add-a-legend)
 
 ## Output Summary
 
@@ -37,4 +35,8 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | 5            | data/processed | 301_nptr_genes_gtex_dataset.csv           | Gene expression of 301 NPTR GTEx unified genes                     |
 | 5            | data/objects   | 301_nptr_genes.RData                      | List of 301 NPTR genes                                             |
 | 6            | data/processed | nptr_prad_unified_301.csv                 | Expression of 301 NPTR genes in TCGA PRAD tumour dataset           |
-| 6            | data/processed | nptr_prad_unified_642.csv                 | Expression of 642 NPTR genes in TCGA PRAD tumour dataset           |
+| 6            | data/processed | nptr_prad_unified_642.csv                 | Expression of 642S NPTR genes in TCGA PRAD tumour dataset          |
+| 7            | figs           | dendrogram-301-nptr-gs-in-prad.png        | Hierarchical clustered dendrogram of NPTR genes in unified PRAD    |
+| 7            | figs           | dendrogram-30-nptr-goi-in-prad.png        | Dendrogram of NPTR genes in unified PRAD (zoomed to 30 GOI)        |
+| 7            | data/objects   | 30_nptr_goi.RData                         | List of 30 NPTR genes of interest                                  |
+
