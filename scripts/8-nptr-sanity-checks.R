@@ -36,7 +36,7 @@ ggplot(gc_pcon_comparison_df, aes(x=gc_unified,y=gc_condensed)) +
     y = 'Gini before unification') +
   xlim(0,1)+ylim(0,1)
 
-# ggsave(filename = "GC vs GC comparison, NPTR highlighted.png")
+# ggsave(figs/filename = "GC vs GC comparison, NPTR highlighted.png")
 
 gc_pcon_comparison_df %>% 
   filter(gc_unified > 0.75) %>% 
@@ -72,4 +72,4 @@ ggplot(gc_pcon_comparison_df, aes(x=pcon_unified ,y=pcon_condensed)) +
   facet_zoom(xlim = c(0,0.1),
              ylim = c(0,0.1))
 
-# ggsave(filename = "PCON vs PCON comparison, NPTR highlighted.png")
+# ggsave(filename = "figs/PCON vs PCON comparison, NPTR highlighted.png")
