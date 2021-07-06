@@ -14,7 +14,12 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 ### To do next
 - 8-nptr-sanity-check
   - branch script to try to add legend for NPTR gene sets. Some ideas [here](https://stackoverflow.com/questions/17713919/two-geom-points-add-a-legend)
-- 
+- 9-tissue-count
+- 10-gsva-prostate
+- 11-gsva-prad
+- 12-clean-clinical-data
+- 13-gsva-by-clinical
+- 14-
 
 ## Output Summary
 
