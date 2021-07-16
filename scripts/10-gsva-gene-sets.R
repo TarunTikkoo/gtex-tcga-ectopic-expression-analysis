@@ -1,9 +1,6 @@
 # Load packages -----------------------------------------------------------
 
 library(tidyverse)
-library(GSVA)
-library(stats)
-
 
 # Gene sets setup ---------------------------------------------------------
 

@@ -14,7 +14,8 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 ### To do next
 - 8-nptr-sanity-check
   - branch script to try to add legend for NPTR gene sets. Some ideas [here](https://stackoverflow.com/questions/17713919/two-geom-points-add-a-legend)
-- 10-gsva-prostate
+- 10-gsva-gene-sets
+- 11-gsva-prostate
 - 11-gsva-prad
 - 12-clean-clinical-data
 - 13-gsva-by-clinical
@@ -39,20 +40,22 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | 7            | data/objects   | 30_nptr_goi.RData                             | List of 30 NPTR genes of interest                                  |
 | 9            | data/objects   | gtex_unified_301_max_tissues.RData            | 301 NPTR genes and source tissue of max expression                 |
 | 10           | data/objects   | nptr_gene_sets_list.RData                     | List object with 642, 301, 30 NPTR and liver, easophagus subsets   |
+| 11           | data/objects   | unified_gtex_prostate_samples_gsva_long       | GSVA scores for unified GTEx prostate samples by gene set          |
 
 
 ## Figures Summary
 
-| **Script #** | **Location**   | **Output**                                    |                  **Description**                                   |
-|:------------:|----------------|-----------------------------------------------|--------------------------------------------------------------------|
-| 2            | figs           | PCON vs Gini - GTEx condensed dataset.png     | PCON vs GC plot - GTEx condensed dataset                           |
-| 2            | figs           | PCON vs Gini - GTEx unified dataset.png       | PCON vs GC plot - GTEx unified dataset                             |
-| 3            | figs           | Gini Condensed vs Gini Unified.png            | GC vs GC comparison plot of condensed and unified GTEx data        |
-| 3            | figs           | PCON Condensed vs PCON Unified.png            | PCON vs PCON comparison plot of condensed and unified GTEx data    |
-| 7            | figs           | dendrogram-301-nptr-gs-in-prad.png            | Hierarchical clustered dendrogram of NPTR genes in unified PRAD    |
-| 7            | figs           | dendrogram-30-nptr-goi-in-prad.png            | Dendrogram of NPTR genes in unified PRAD (zoomed to 30 GOI)        |
-| 8            | figs           | GC vs GC comparison, NPTR highlighted.png     | Sanity check of NPTR Gini Coefficients before and after unification|
-| 8            | figs           | PCON vs PCON comparison, NPTR highlighted.png | Sanity check of NPTR PCON before and after unification             |
-| 9            | figs           | NPTR Source Tissue Count of 642 NPTR genes.png|                                                                    |
-| 9            | figs           | NPTR Source Tissue Count of 301 NPTR genes.png|                                                                    |
-| 9            | figs           | NPTR Source Tissue Count of 30 NPTR genes.png |                                                                    |
+| **Script #** | **Folder**   | **Output**                                           |                  **Description**                                        |
+|:------------:|--------------|------------------------------------------------------|-------------------------------------------------------------------------|
+| 2            | figs         | PCON vs Gini - GTEx condensed dataset.png            | PCON vs GC plot - GTEx condensed dataset                                |
+| 2            | figs         | PCON vs Gini - GTEx unified dataset.png              | PCON vs GC plot - GTEx unified dataset                                  |
+| 3            | figs         | Gini Condensed vs Gini Unified.png                   | GC vs GC comparison plot of condensed and unified GTEx data             |
+| 3            | figs         | PCON Condensed vs PCON Unified.png                   | PCON vs PCON comparison plot of condensed and unified GTEx data         |
+| 7            | figs         | dendrogram-301-nptr-gs-in-prad.png                   | Hierarchical clustered dendrogram of NPTR genes in unified PRAD         |
+| 7            | figs         | dendrogram-30-nptr-goi-in-prad.png                   | Dendrogram of NPTR genes in unified PRAD (zoomed to 30 GOI)             |
+| 8            | figs         | GC vs GC comparison, NPTR highlighted.png            | Sanity check of NPTR Gini Coefficients before and after unification     |
+| 8            | figs         | PCON vs PCON comparison, NPTR highlighted.png        | Sanity check of NPTR PCON before and after unification                  |
+| 9            | figs         | NPTR Source Tissue Count of 642 NPTR genes.png       |                                                                         |
+| 9            | figs         | NPTR Source Tissue Count of 301 NPTR genes.png       |                                                                         |
+| 9            | figs         | NPTR Source Tissue Count of 30 NPTR genes.png        |                                                                         |
+| 11           | figs         | GSVA scores of GTEx Prostate Samples by Gene Sets.png| Violin plot of GSVA scores of unified GTEx prostate samples by gene set |
