@@ -43,7 +43,8 @@ unified_gtex_prostate_samples_gsva_long$gene_set <-
          `30_GOI` = "30 NPTR GOI")
 }
 
-# save(unified_gtex_prostate_samples_gsva_long, file = "unified_gtex_prostate_samples_gsva_long.RData")
+# save(unified_gtex_prostate_samples_gsva_long, file = "data/objects/unified_gtex_prostate_samples_gsva_long.RData")
+
 # Violin Plot -------------------------------------------------------------
 ggplot(unified_gtex_prostate_samples_gsva_long, aes(x = gene_set, y = gsva_score)) +
   geom_violin(trim = FALSE) +
@@ -53,7 +54,7 @@ ggplot(unified_gtex_prostate_samples_gsva_long, aes(x = gene_set, y = gsva_score
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14))
 
-# ggsave(file = "GSVA scores of GTEx Prostate Samples by Gene Sets.png")
+# ggsave(file = "figs/GSVA scores of GTEx Prostate Samples by Gene Sets.png")
 
 # Histograms -------------------------------------------------------------
 # Simply here for extra reference - not output as they show the same information

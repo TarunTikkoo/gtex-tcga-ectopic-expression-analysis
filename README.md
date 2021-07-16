@@ -40,7 +40,8 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | 7            | data/objects   | 30_nptr_goi.RData                             | List of 30 NPTR genes of interest                                  |
 | 9            | data/objects   | gtex_unified_301_max_tissues.RData            | 301 NPTR genes and source tissue of max expression                 |
 | 10           | data/objects   | nptr_gene_sets_list.RData                     | List object with 642, 301, 30 NPTR and liver, easophagus subsets   |
-| 11           | data/objects   | unified_gtex_prostate_samples_gsva_long       | GSVA scores for unified GTEx prostate samples by gene set          |
+| 11           | data/objects   | unified_gtex_prostate_samples_gsva_long.RData | GSVA scores for unified GTEx prostate samples by gene set          |
+| 12           | data/objects   | unified_tcga_prad_samples_gsva_long.RData     | GSVA scores for unified TCGA PRAD samples by gene set              |
 
 
 ## Figures Summary
@@ -59,3 +60,4 @@ Wang, Q., Armenia, J., Zhang, C. *et al.* Unifying cancer and normal RNA sequenc
 | 9            | figs         | NPTR Source Tissue Count of 301 NPTR genes.png       |                                                                         |
 | 9            | figs         | NPTR Source Tissue Count of 30 NPTR genes.png        |                                                                         |
 | 11           | figs         | GSVA scores of GTEx Prostate Samples by Gene Sets.png| Violin plot of GSVA scores of unified GTEx prostate samples by gene set |
+| 12           | figs         | GSVA scores of TCGA PRAD Samples by Gene Sets.png    | Violin plot of GSVA scores of unified TCGA PRAD samples by gene set     |
