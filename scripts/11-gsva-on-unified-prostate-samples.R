@@ -54,6 +54,7 @@ ggplot(unified_gtex_prostate_samples_gsva_long, aes(x = gene_set, y = gsva_score
         axis.title = element_text(size = 14))
 
 # ggsave(file = "GSVA scores of GTEx Prostate Samples by Gene Sets.png")
+
 # Histograms -------------------------------------------------------------
 # Simply here for extra reference - not output as they show the same information
 # as violin plots
